@@ -1,88 +1,108 @@
 <script lang="ts">
-  // let timer = new Date().toLocaleString();
-  let timer = "25:00";
+  import { onMount } from 'svelte';
+  import Button from './Button.svelte';
+  import Footer from './Footer.svelte';
+  import Header from './Header.svelte';
+  import Timer from './Timer.svelte';
+  import AppAbout from './AppAbout.svelte';
 
-
-  let runningTimer: boolean = false;
-
-  const toggleStatus = (): void => {
-    runningTimer = !runningTimer;
+  enum TimerState {
+    INITIALIZED,
+    RUNNING,
+    PAUSED,
+    STOPPED,
   }
 
+  let id: NodeJS.Timer = null;
+  let label: string = "25:00";
+  let targetSeconds: number = null;
+  let initalTargetMinutes: number = 1;
+  let buttonLabel;
+  let state: TimerState = TimerState.INITIALIZED;
+
+  const stateToLabel = (): void => {
+    const labels = {
+      [TimerState.INITIALIZED]: 'Start',
+      [TimerState.RUNNING]: 'Pause',
+      [TimerState.PAUSED]: 'Resume',
+    }
+    return labels[state];
+  }
+
+  const setup = (minutes: number = 1): void => {
+    clearInterval(id);
+    label = `${minutes.toString().padStart(2, '0')}:00`;
+    state = TimerState.INITIALIZED;
+    buttonLabel = stateToLabel();
+    targetSeconds = minutes * 60;
+    initalTargetMinutes = minutes;
+  };
+
+  const reset = (minutes: number = 1): void => {
+    setup(minutes);
+  }
+
+  const triggerAction = (): void => {
+    switch(state) {
+      case TimerState.INITIALIZED:
+        id = setInterval(_tick, 1000);
+        state = TimerState.RUNNING;
+        break;
+      case TimerState.RUNNING:
+        state = TimerState.PAUSED;
+        break;
+      case TimerState.PAUSED:
+        state = TimerState.RUNNING;
+        break;
+    }
+    buttonLabel = stateToLabel();
+  }
+
+  const _tick = (): void => {
+    if (targetSeconds <= 0) {
+      document.title = `Pomoclock - short break`;
+      const SHORT_BREAK_MINUTES = 5;
+      reset(SHORT_BREAK_MINUTES);
+      return;
+    }
+    if (state === TimerState.PAUSED) return;
+    targetSeconds--;
+    const minutes = Math.floor(targetSeconds / 60);
+    const seconds = targetSeconds - minutes * 60;
+    buttonLabel = stateToLabel();
+    label = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  };
+
+  onMount(() => {
+    document.title = `Pomoclock - ${label}`;
+    setup(1);
+  });
 </script>
 
-<main>
+<main class="app">
+  <section class="app__content">
+    <Header />
 
-  <h1>Pomoclock 🍅</h1>
-  
+    <Timer onTimerSelect={setup} {label} />
 
-  <div class="button-list">
-    <button on:click={toggleStatus}>
-      Pomodoro
-    </button> 
-    <button on:click={toggleStatus}>
-      Short break
-    </button> 
-    <button on:click={toggleStatus}>
-      Long break
-    </button>      
-  </div>
+    <div class="button-list">
+      <Button label={buttonLabel} onClick={triggerAction} />
 
+      <Button label="Reset" onClick={() => reset(initalTargetMinutes)} />
+    </div>
 
-  <p class="timer">{timer}</p>
+    <Footer />
+  </section>
 
-  <div class="button-list">
-    <button class={'button'} on:click={toggleStatus}>
-      {runningTimer ? 'Pause' : 'Start'}
-    </button>      
-
-    <button class={'button'} on:click={() => null}>
-      Reset
-    </button>      
-  </div>
-  <p>
-    Check out <a href={'https://github.com/scostadavid'} target={'_blank'} rel={'noreferrer'}>Github</a>
-  </p>
+  <AppAbout />
 </main>
 
 <style>
+  .app {
+    /* background-color: #fff; */
+  }
 
-main {
-  border: 1px solid white;
-}
-
-.button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 1.2em 2em;
-  margin: .2rem;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-.button:hover {
-  border-color: #646cff;
-}
-
-.button:focus,
-.button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-.button-list {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
-.timer {
-  font-size: 3em;
-  font-weight: bold;
-}
-  
+  .app__content {
+    height: 100vh;
+  }
 </style>

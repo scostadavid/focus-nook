@@ -28,12 +28,12 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-width: 320px;
+  min-width: 280px;
   min-height: 100vh;
 }
 
 h1 {
-  font-size: 3em;
+  font-size: 2.7em;
   line-height: 1.1;
 }
 
@@ -55,6 +55,8 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+  width: 12rem;
+  height: 5rem;
 }
 
 button:hover {
@@ -75,6 +77,6 @@ button:focus-visible {
     color: #747bff;
   }
   button {
-    background-color: #f9f9f9;
+    background-color: #f6f6f6;
   }
 }
