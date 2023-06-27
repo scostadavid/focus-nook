@@ -7,11 +7,7 @@
 </section>
 
 <style>
-  .app {
-    /* background-color: #fff; */
-  }
-
-  .app__content {
-    height: 100vh;
+  .app__about {
+    background-color: #333;
   }
 </style>

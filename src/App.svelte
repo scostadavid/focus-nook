@@ -4,105 +4,123 @@
   import Footer from './Footer.svelte';
   import Header from './Header.svelte';
   import Timer from './Timer.svelte';
-  import AppAbout from './AppAbout.svelte';
 
   enum TimerState {
     INITIALIZED,
     RUNNING,
-    PAUSED,
-    STOPPED,
+    PAUSED
   }
 
-  let id: NodeJS.Timer = null;
-  let label: string = "25:00";
-  let targetSeconds: number = null;
-  let initalTargetMinutes: number = 1;
-  let buttonLabel;
-  let state: TimerState = TimerState.INITIALIZED;
-
-  const stateToLabel = (): void => {
-    const labels = {
-      [TimerState.INITIALIZED]: 'Start',
-      [TimerState.RUNNING]: 'Pause',
-      [TimerState.PAUSED]: 'Resume',
-    }
-    return labels[state];
+  enum ModeState {
+    FOCUS,
+    REST
   }
 
-  const setup = (minutes: number = 1): void => {
-    clearInterval(id);
-    label = `${minutes.toString().padStart(2, '0')}:00`;
-    state = TimerState.INITIALIZED;
-    buttonLabel = stateToLabel();
-    targetSeconds = minutes * 60;
-    initalTargetMinutes = minutes;
+  let timerId: NodeJS.Timer = null;
+  let timerCurrentMode: ModeState = ModeState.FOCUS;
+  let timerTimelabel: string = "25:00";
+  let timerTargetSeconds: number = null;
+  let timerInitalTargetMinutes: number = 25;
+  let timerTriggerButtonLabel;
+  let timerState: TimerState = TimerState.INITIALIZED;
+
+  const SHORT_BREAK_MINUTES = 5;
+  const LONG_BREAK_MINUTES = 15;
+  const POMODORO_MINUTES = 25;
+
+  const labels = {
+    [TimerState.INITIALIZED]: 'Start',
+    [TimerState.RUNNING]: 'Pause',
+    [TimerState.PAUSED]: 'Resume',
+  }
+
+  const modeLabel = {
+    [ModeState.FOCUS]: 'Focus 🍅',
+    [ModeState.REST]: 'Rest 😴'
   };
 
-  const reset = (minutes: number = 1): void => {
-    setup(minutes);
+  const triggerAudio = new Audio('../../public/random.wav');
+
+  const setup = (minutes: number, mode: ModeState): void => {
+    clearInterval(timerId);
+    timerTimelabel = `${minutes.toString().padStart(2, '0')}:00`;
+    timerState = TimerState.INITIALIZED;
+    timerTriggerButtonLabel = labels[timerState];
+    timerCurrentMode = mode;
+    timerTargetSeconds = minutes * 60;
+    timerInitalTargetMinutes = minutes;
+  };
+
+  const reset = (minutes: number): void => {
+    setup(minutes, timerCurrentMode);
   }
 
   const triggerAction = (): void => {
-    switch(state) {
+    switch(timerState) {
       case TimerState.INITIALIZED:
-        id = setInterval(_tick, 1000);
-        state = TimerState.RUNNING;
+        timerId = setInterval(_tick, 1000);
+        triggerAudio.play();
+        timerState = TimerState.RUNNING;
         break;
       case TimerState.RUNNING:
-        state = TimerState.PAUSED;
+        timerState = TimerState.PAUSED;
         break;
       case TimerState.PAUSED:
-        state = TimerState.RUNNING;
+        triggerAudio.play();
+        timerState = TimerState.RUNNING;
         break;
     }
-    buttonLabel = stateToLabel();
+    timerTriggerButtonLabel = labels[timerState];
   }
 
-  const _tick = (): void => {
-    if (targetSeconds <= 0) {
-      document.title = `Pomoclock - short break`;
-      const SHORT_BREAK_MINUTES = 5;
-      reset(SHORT_BREAK_MINUTES);
+  const switchMode = (): void => {
+    triggerAudio.play();
+    if (timerCurrentMode === ModeState.FOCUS) {
+      timerCurrentMode = ModeState.REST;
+      setup(SHORT_BREAK_MINUTES, timerCurrentMode);
+      document.title = `Pomoclock - ${modeLabel[timerCurrentMode]}`;
+      triggerAction();
       return;
     }
-    if (state === TimerState.PAUSED) return;
-    targetSeconds--;
-    const minutes = Math.floor(targetSeconds / 60);
-    const seconds = targetSeconds - minutes * 60;
-    buttonLabel = stateToLabel();
-    label = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+    timerCurrentMode = ModeState.FOCUS;
+    document.title = `Pomoclock - ${modeLabel[timerCurrentMode]}`;
+    setup(POMODORO_MINUTES, timerCurrentMode);
+    return;
+};
+
+  const _tick = (): void => {
+    if (timerTargetSeconds <= 0) {
+      switchMode();
+      return;
+    }
+    if (timerState === TimerState.PAUSED) return;
+    timerTargetSeconds--;
+    const minutes = Math.floor(timerTargetSeconds / 60);
+    const seconds = timerTargetSeconds - minutes * 60;
+    timerTriggerButtonLabel = labels[timerState];
+    timerTimelabel = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
   };
 
   onMount(() => {
-    document.title = `Pomoclock - ${label}`;
-    setup(1);
+    document.title = `Pomoclock - ${modeLabel[timerCurrentMode]}`;
+    setup(POMODORO_MINUTES, timerCurrentMode);
   });
 </script>
 
 <main class="app">
+  <Header />
   <section class="app__content">
-    <Header />
+    <Button label={'Pomodoro'} onClick={() => setup(POMODORO_MINUTES, ModeState.FOCUS)}/>
+    <Button label={'Short break'} onClick={() => setup(SHORT_BREAK_MINUTES, ModeState.REST)}/>
+    <Button label={'Long break'} onClick={() => setup(LONG_BREAK_MINUTES, ModeState.REST)}/>
 
-    <Timer onTimerSelect={setup} {label} />
+    <Timer {...{currentModeLabel: modeLabel[timerCurrentMode], time: timerTimelabel}} />
 
-    <div class="button-list">
-      <Button label={buttonLabel} onClick={triggerAction} />
-
-      <Button label="Reset" onClick={() => reset(initalTargetMinutes)} />
-    </div>
-
+    <Button label={timerTriggerButtonLabel} onClick={triggerAction} />
+    <Button label="Reset" onClick={() => reset(timerInitalTargetMinutes)} />
     <Footer />
   </section>
-
-  <AppAbout />
 </main>
 
 <style>
-  .app {
-    /* background-color: #fff; */
-  }
-
-  .app__content {
-    height: 100vh;
-  }
 </style>

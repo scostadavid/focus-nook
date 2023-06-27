@@ -1,36 +1,27 @@
+
 <script lang="ts">
-  export let label;
-  export let onTimerSelect;
+  export let time: string;
+  export let currentModeLabel: string;
 </script>
 
-<p class="timer">{label}</p>
-<div class="list">
-  <button on:click={() => onTimerSelect(25)}>
-    Pomodoro
-  </button>
-  <button on:click={() => onTimerSelect(5)}>
-    Short break
-  </button>
-  <button on:click={() => onTimerSelect(15)}>
-    Long break
-  </button>
+<div class="timer">
+  <div class="timer__arc">
+    <p class="timer__mode-label">{currentModeLabel}</p>
+    <p class="timer__label">{time}</p>
+  </div>
 </div>
+
 
 <style>
   .timer {
+    padding: 2rem;
+    border-radius: 20px;
+  }
+  .timer__label {
     font-size: 3em;
     font-weight: bold;
   }
-  .list {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-  }
-
-  @media (max-width: 450px) {
-    .list {
-      flex-direction: column;
-    }
+  .timer__mode-label {
+    font-size: 1.2rem;
   }
 </style>
