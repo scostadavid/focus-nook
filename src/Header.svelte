@@ -1,7 +1,7 @@
 
 
 <header class="app__header">
-  <h1>Pomoclock</h1>
+  <h1>Focus Nook</h1>
 </header>
 
 <style>

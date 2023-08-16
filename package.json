@@ -1,9 +1,9 @@
 {
-  "name": "pomoclock",
+  "name": "focus-nook",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://scostadavid.github.io/pomoclock/",
+  "homepage": "https://scostadavid.github.io/focusnook/",
   "scripts": {
     "dev": "vite",
     "develop": "vite",

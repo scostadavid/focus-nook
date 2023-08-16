@@ -39,7 +39,7 @@
     [ModeState.REST]: 'Rest 😴'
   };
 
-  const triggerAudio = new Audio('../../public/random.wav');
+  const triggerAudio = new Audio(import.meta.env.DEV ? '../../public/random.wav' : '/random.wav');
 
   const setup = (minutes: number, mode: ModeState): void => {
     clearInterval(timerId);
@@ -78,12 +78,12 @@
     if (timerCurrentMode === ModeState.FOCUS) {
       timerCurrentMode = ModeState.REST;
       setup(SHORT_BREAK_MINUTES, timerCurrentMode);
-      document.title = `Pomoclock - ${modeLabel[timerCurrentMode]}`;
+      document.title = `Focus Nook - ${modeLabel[timerCurrentMode]}`;
       triggerAction();
       return;
     }
     timerCurrentMode = ModeState.FOCUS;
-    document.title = `Pomoclock - ${modeLabel[timerCurrentMode]}`;
+    document.title = `Focus Nook - ${modeLabel[timerCurrentMode]}`;
     setup(POMODORO_MINUTES, timerCurrentMode);
     return;
 };
@@ -102,7 +102,7 @@
   };
 
   onMount(() => {
-    document.title = `Pomoclock - ${modeLabel[timerCurrentMode]}`;
+    document.title = `Focus Nook - ${modeLabel[timerCurrentMode]}`;
     setup(POMODORO_MINUTES, timerCurrentMode);
   });
 </script>
