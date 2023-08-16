@@ -1,6 +1,6 @@
-# 🍅 [Pomoclock](https://scostadavid.github.io/pomoclock/)
+# 🍅 [Focus Nook](https://scostadavid.github.io/focusnook/)
 
-Pomodoro app written in svelte.
+Productivity focused app written in svelte.
 
 <!-- ![Preview](public/img/screenshot.png) -->
 <!--
