@@ -9,18 +9,15 @@
 
 <style>
   button {
-    border-radius: 10px;
+    border-radius: 5px;
     border: 1px solid transparent;
     padding: 0.6em 1.2em;
-    margin: .2rem;
     font-size: 1em;
     font-weight: 500;
     background-color: #1a1a1a;
     cursor: pointer;
     transition: border-color 0.25s;
-    width: 12rem;
-    /* width: 100%; */
-    height: 5rem;
+    height: 3rem;
   }
 
   button:hover {

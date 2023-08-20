@@ -5,17 +5,27 @@
 </script>
 
 <div class="timer">
-  <div class="timer__arc">
-    <p class="timer__mode-label">{currentModeLabel}</p>
-    <p class="timer__label">{time}</p>
-  </div>
+  <p class="timer__label">{time}</p>
+  <p class="timer__mode-label">It's {currentModeLabel} time</p>
 </div>
 
 
 <style>
   .timer {
-    padding: 2rem;
-    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 1rem;
+    border-radius: 5px;
+    background-color: #1A1A1A;
+
+    margin: .5rem 0;
+
+  }
+
+  p {
+    margin: 1rem 0;
   }
   .timer__label {
     font-size: 3em;
