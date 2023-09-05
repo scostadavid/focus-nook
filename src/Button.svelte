@@ -1,10 +1,14 @@
 <script>
-  export let label;
-  export let onClick;
+  export let label = null;
+  export let onClick = null;
 </script>
 
 <button on:click={onClick}>
-  {label}
+  {#if label}
+    {label}
+  {:else}
+    <slot/>
+  {/if}
 </button>
 
 <style>
@@ -18,6 +22,9 @@
     cursor: pointer;
     transition: border-color 0.25s;
     height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   button:hover {
@@ -29,7 +36,7 @@
     outline: 4px auto -webkit-focus-ring-color;
   }
 
-  @media (prefers-color-scheme: light) {
+  /* @media (prefers-color-scheme: light) {
     :root {
       color: #213547;
       background-color: #ffffff;
@@ -38,5 +45,5 @@
     button {
       background-color: #f6f6f6;
     }
-  }
+  } */
 </style>

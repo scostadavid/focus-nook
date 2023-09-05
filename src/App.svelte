@@ -1,135 +1,54 @@
 <script lang="ts">
-  import { onMount, afterUpdate } from 'svelte';
   import Button from './Button.svelte';
   import Footer from './Footer.svelte';
   import Header from './Header.svelte';
+  import Modal from './Modal.svelte';
   import Timer from './Timer.svelte';
+  import SfxController from './SFXController.svelte';
 
-  enum TimerState {
-    INITIALIZED,
-    RUNNING,
-    PAUSED
-  }
-
-  enum ModeState {
-    FOCUS,
-    REST
-  }
-
-  let timerId: NodeJS.Timer = null;
-  let timerCurrentMode: ModeState = ModeState.FOCUS;
-  let timerTimelabel: string = "25:00";
-  let timerTargetSeconds: number = null;
-  let timerInitalTargetMinutes: number = 25;
-  let timerTriggerButtonLabel;
-  let timerState: TimerState = TimerState.INITIALIZED;
-
-  const SHORT_BREAK_MINUTES = 5;
-  const LONG_BREAK_MINUTES = 15;
-  const POMODORO_MINUTES = 25;
-
-  const labels = {
-    [TimerState.INITIALIZED]: 'Start',
-    [TimerState.RUNNING]: 'Pause',
-    [TimerState.PAUSED]: 'Resume',
-  }
-
-  const modeLabel = {
-    [ModeState.FOCUS]: 'Focus 🎯',
-    [ModeState.REST]: 'Rest 😴'
-  };
-
-  const triggerAudio = new Audio(import.meta.env.DEV ? '../../public/random.wav' : '/random.wav');
-
-  const setup = (minutes: number, mode: ModeState): void => {
-    clearInterval(timerId);
-    timerTimelabel = `${minutes.toString().padStart(2, '0')}:00`;
-    timerState = TimerState.INITIALIZED;
-    timerTriggerButtonLabel = labels[timerState];
-    timerCurrentMode = mode;
-    timerTargetSeconds = minutes * 60;
-    timerInitalTargetMinutes = minutes;
-  };
-
-  const reset = (minutes: number): void => {
-    setup(minutes, timerCurrentMode);
-  }
-
-  const triggerAction = (): void => {
-    switch(timerState) {
-      case TimerState.INITIALIZED:
-        timerId = setInterval(_tick, 1000);
-        triggerAudio.play();
-        timerState = TimerState.RUNNING;
-        break;
-      case TimerState.RUNNING:
-        timerState = TimerState.PAUSED;
-        break;
-      case TimerState.PAUSED:
-        triggerAudio.play();
-        timerState = TimerState.RUNNING;
-        break;
-    }
-    timerTriggerButtonLabel = labels[timerState];
-  }
-
-  const switchMode = (): void => {
-    triggerAudio.play();
-    if (timerCurrentMode === ModeState.FOCUS) {
-      timerCurrentMode = ModeState.REST;
-      setup(SHORT_BREAK_MINUTES, timerCurrentMode);
-      document.title = `(${timerTimelabel}) Focus Nook - ${modeLabel[timerCurrentMode]}`;
-      triggerAction();
-      return;
-    }
-    timerCurrentMode = ModeState.FOCUS;
-    document.title = `(${timerTimelabel}) Focus Nook - ${modeLabel[timerCurrentMode]}`;
-    setup(POMODORO_MINUTES, timerCurrentMode);
-    return;
-  };
-
-  const _tick = (): void => {
-    if (timerTargetSeconds <= 0) {
-      switchMode();
-      return;
-    }
-    if (timerState === TimerState.PAUSED) return;
-    timerTargetSeconds--;
-    const minutes = Math.floor(timerTargetSeconds / 60);
-    const seconds = timerTargetSeconds - minutes * 60;
-    timerTriggerButtonLabel = labels[timerState];
-    timerTimelabel = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-  };
-
-  onMount(() => {
-    document.title = `(${timerTimelabel}) Focus Nook - ${modeLabel[timerCurrentMode]}`;
-    setup(POMODORO_MINUTES, timerCurrentMode);
-  });
-
-  afterUpdate(() => {
-    document.title = `(${timerTimelabel}) Focus Nook - ${modeLabel[timerCurrentMode]}`
-  });
+  export let showModal = false;
 </script>
 
 <main class="app">
-  <Header />
-  <section class="pomodoro">
-    <div class="clock">
-      <div class="clock--modes">
-        <Button label={'Pomodoro'} onClick={() => setup(POMODORO_MINUTES, ModeState.FOCUS)}/>
-        <Button label={'Short break'} onClick={() => setup(SHORT_BREAK_MINUTES, ModeState.REST)}/>
-        <Button label={'Long break'} onClick={() => setup(LONG_BREAK_MINUTES, ModeState.REST)}/>
-      </div>
+  <Header>
+    <!-- <Button onClick={() => showModal = true}> -->
+      <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+      <!-- <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"/></svg> -->
+    <!-- </Button> -->
+  </Header>
 
-      <Timer {...{currentModeLabel: modeLabel[timerCurrentMode], time: timerTimelabel}} />
+  <Timer />
 
-      <div class="clock--options">
-        <Button label={timerTriggerButtonLabel} onClick={triggerAction} />
-        <Button label="Reset" onClick={() => reset(timerInitalTargetMinutes)} />
-      </div>
-
+  <!-- <section class="sfx">
+    <div>
+      <SfxController icon={'fire'}/>
+      <SfxController icon={'rain'}/>
+      <SfxController icon={'coffe'}/>
     </div>
-  </section>
+  </section> -->
+
+  <Modal bind:showModal>
+    <h2 slot="header">
+      Settings
+    </h2>
+
+    <h3>
+      Timer
+    </h3>
+
+
+    <input type="number" min="1" max="60" value="25"/>
+    <input type="number" min="1" max="60" value="05"/>
+    <input type="number" min="1" max="60" value="15"/>
+
+
+
+    <h3>
+      SFX
+    </h3>
+
+  </Modal>
+
   <Footer />
 </main>
 
@@ -140,33 +59,24 @@
     height: 100vh;
   }
 
-  .pomodoro {
+  /* .sfx {
     width: 100%;
     display: flex;
     justify-content: center;
-    padding: 4rem 0;
+    padding-bottom: 4rem;
+  } */
 
-  }
-
-  .clock {
+  /* .sfx > div {
     width: 500px;
-  }
-
-  .clock--modes {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: .5rem;
-  }
-
-  .clock--options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: .5rem;
-  }
+  } */
 
   @media (max-width: 700px) {
-    .clock {
+    /* .sfx > div {
       width: 350px;
-    }
+    } */
   }
+
+  /* svg {
+    fill: white;
+  } */
 </style>

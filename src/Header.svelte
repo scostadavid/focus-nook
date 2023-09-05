@@ -1,30 +1,20 @@
-
-
-<header class="header">
+<header>
   <h1>🎯 Focus Nook</h1>
-  <!-- <nav class="header-configs">
-    <button>theme</button>
-  </nav> -->
+  <nav class="header-configs">
+    <slot/>
+  </nav>
 </header>
 
 <style>
-  .header {
+  header {
     display: flex;
     justify-content: space-between;
+    /* justify-self: center; */
+    align-self: center;
     align-items: center;
     height: 4rem;
-    padding: 0 4rem;
-  }
-
-  .header-configs {
-    background-color: #1a1a1a;
-    padding: .5rem;
-    border-radius: 50px;
-  }
-
-  .header-configs > button {
-    background-color: transparent;
-    border: none;
+    padding: 1rem 4rem;
+    width: 500px;
   }
 
   h1 {
@@ -32,8 +22,9 @@
   }
 
   @media (max-width: 700px) {
-    .header {
-      padding: 0 1rem;
+    header {
+      padding: .5rem 1rem;
+      width: 350px;
     }
   }
 </style>
