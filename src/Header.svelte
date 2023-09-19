@@ -1,5 +1,9 @@
 <header>
-  <h1>🎯 Focus Nook</h1>
+  <h1>🎯 FOCUS
+    <span>
+      NOOK
+    </span>
+  </h1>
   <nav class="header-configs">
     <slot/>
   </nav>
@@ -19,6 +23,12 @@
 
   h1 {
     font-size: 1.5rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+  }
+
+  h1 > span {
+    color: #646cff;
   }
 
   @media (max-width: 700px) {
