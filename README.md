@@ -1,4 +1,4 @@
-# 🌱 [Focus Nook](https://scostadavid.github.io/focusgarden/)
+# 🌱 [Focus Garden](https://scostadavid.github.io/focusgarden/)
 
 Productivity focused app written in svelte.
 
