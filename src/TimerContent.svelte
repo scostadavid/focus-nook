@@ -4,7 +4,7 @@
   export let currentModeLabel: string;
 </script>
 
-<div class="timer">
+<div class="timer bg-base-300 my-4 rounded-xl">
   <p class="timer__label">{time}</p>
   <p class="timer__mode-label">It's {currentModeLabel} time</p>
 </div>
@@ -16,11 +16,6 @@
     flex-direction: column;
     align-items: center;
 
-    padding: 1rem;
-    border-radius: 5px;
-    background-color: #1A1A1A;
-
-    margin: .5rem 0;
 
   }
 

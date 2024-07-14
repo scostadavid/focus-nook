@@ -28,8 +28,8 @@
   let timerState: TimerState = TimerState.INITIALIZED;
 
   const modeLabel = {
-    [ModeState.FOCUS]: 'focus 🎯',
-    [ModeState.REST]: 'rest 😴'
+    [ModeState.FOCUS]: 'Focus',
+    [ModeState.REST]: 'Rest'
   };
 
   const triggerAudio = new Audio(import.meta.env.DEV ? '/notification.wav' : './notification.wav');
@@ -69,12 +69,12 @@
     if (timerCurrentMode === ModeState.FOCUS) {
       timerCurrentMode = ModeState.REST;
       setup(SHORT_BREAK_MINUTES, timerCurrentMode);
-      document.title = `(${timerTimelabel}) Focus Nook - ${modeLabel[timerCurrentMode]}`;
+      document.title = `(${timerTimelabel}) Focus Garden | ${modeLabel[timerCurrentMode]}`;
       triggerAction();
       return;
     }
     timerCurrentMode = ModeState.FOCUS;
-    document.title = `(${timerTimelabel}) Focus Nook - ${modeLabel[timerCurrentMode]}`;
+    document.title = `(${timerTimelabel}) Focus Garden | ${modeLabel[timerCurrentMode]}`;
     setup(POMODORO_MINUTES, timerCurrentMode);
     return;
   };
@@ -92,19 +92,19 @@
   };
 
   onMount(() => {
-    document.title = `(${timerTimelabel}) Focus Nook - ${modeLabel[timerCurrentMode]}`;
+    document.title = `(${timerTimelabel}) Focus Garden | ${modeLabel[timerCurrentMode]}`;
     setup(POMODORO_MINUTES, timerCurrentMode);
   });
 
   afterUpdate(() => {
-    document.title = `(${timerTimelabel}) Focus Nook - ${modeLabel[timerCurrentMode]}`
+    document.title = `(${timerTimelabel}) Focus Garden | ${modeLabel[timerCurrentMode]}`
   });
 
 
 
 </script>
 
-<section class="pomodoro">
+<section class="pomodoro my-8">
   <div class="clock">
     <div class="clock--modes">
       <Button label={'Focus'} onClick={() => setup(POMODORO_MINUTES, ModeState.FOCUS)}/>
@@ -135,7 +135,6 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    padding: 4rem 0;
   }
 
   .clock {
@@ -154,9 +153,6 @@
     grid-gap: .5rem;
   }
 
-  svg {
-    fill: white;
-  }
 
   @media (max-width: 700px) {
     .clock {
