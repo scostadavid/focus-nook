@@ -4,5 +4,5 @@ Productivity focused app written in svelte.
 
 ## 👨‍💻 Maintainers/Contributors
 
-* David Costa - [scostadavid@proton.me](mailto:scostadavid@proton.me)
+* David Costa - [scostadavid.dev@gmail.com](mailto:scostadavid.dev@gmail.com)
 

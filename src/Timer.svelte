@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, afterUpdate} from 'svelte';
+  import { coins } from './context';
 
   import Button from './Button.svelte';
   import TimerContent from './TimerContent.svelte';
@@ -64,10 +65,16 @@
     }
   }
 
-  const switchMode = (): void => {
+  function completePomodoroCycle() {
+    coins.update(n => n + 1);
+  }
+
+
+  function switchMode(): void {
     triggerAudio.play();
     if (timerCurrentMode === ModeState.FOCUS) {
       timerCurrentMode = ModeState.REST;
+      completePomodoroCycle();
       setup(SHORT_BREAK_MINUTES, timerCurrentMode);
       document.title = `(${timerTimelabel}) Focus Garden | ${modeLabel[timerCurrentMode]}`;
       triggerAction();
@@ -79,7 +86,7 @@
     return;
   };
 
-  const _tick = (): void => {
+  function _tick(): void {
     if (timerTargetSeconds <= 0) {
       switchMode();
       return;

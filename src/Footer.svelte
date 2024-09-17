@@ -1,6 +1,6 @@
 <footer class="app__footer">
   <p>
-    &copy;<a href="https://scostadavid.github.io" target="_blank" rel="noreferrer noopener">scostadavid</a>
+    <a href="https://scostadavid.github.io" target="_blank" rel="noreferrer noopener">&copy; 2024 - scostadavid</a>
   </p>
 </footer>
 
