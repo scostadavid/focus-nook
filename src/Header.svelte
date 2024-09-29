@@ -8,12 +8,6 @@
       Garden
     </span>
   </h1>
-  <nav class="header-configs">
-    <!-- <slot/> -->
-     <div class="border border-btn-primary rounded-xl p-2">
-       <p class="text-lg font-bold" title="{$coins} coins">🪙 {$coins}</p>
-     </div>
-  </nav>
 </header>
 
 <style>
